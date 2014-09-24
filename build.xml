@@ -51,6 +51,15 @@
 			</else>
 		</if>
 	</target>
+	
+	<target name="phplint" description="Lints php files">
+        	<phplint haltonfailure="true">
+            		<fileset dir="${source}">
+                		<include name="**/*.php"/>
+            		</fileset>
+        	</phplint>
+    	</target>
+	
 	<target name="pdepend" description="Generate jdepend.xml and software metrics charts using PHP_Depend">
 		<exec logoutput="true" command="pdepend --jdepend-xml=${basedir}/build/logs/jdepend.xml --jdepend-chart=${basedir}/build/pdepend/dependencies.svg --overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg ${source}" />
 	</target>
