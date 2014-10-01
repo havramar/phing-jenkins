@@ -1,3 +1,8 @@
+What's new:
+* added phplint target for fast linting,
+* phpcs uses PSR2 standard,
+* phpunit with parameters to generate coverage reports (no need to define them in phpunit.xml file),
+
 Those are mainly the config files from http://jenkins-php.org/ with some changes to use with PHING, instead of ANT.
 
 The job template to use can be found under https://github.com/sebastianbergmann/php-jenkins-template.
