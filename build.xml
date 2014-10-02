@@ -1,6 +1,7 @@
 <project name="jenkins-php" default="build" basedir=".">
 	<property name="basedir" value="${project.basedir}" />
 	<property name="source" value="${basedir}/src" />
+	<property name="bin.path" value="${basedir}/vendor/bin" />
 	<!-- # of threads to execute parallel tasks -->
 	<property name="threads" value="4"/>
 	<target name="clean" description="Clean up and create artifact directories">
@@ -18,13 +19,17 @@
 	</target>
 
 	<target name="phpunit" description="Run unit tests using PHPUnit and generates junit.xml and clover.xml">
-		<exec logoutput="true" command="phpunit --coverage-html build/coverage --coverage-clover build/logs/clover.xml --coverage-crap4j build/logs/crap4j.xml --log-junit build/logs/junit.xml -c phpunit.xml.dist" />
+		<exec logoutput="true" command="${bin.path}/phpunit --coverage-html build/coverage --coverage-clover build/logs/clover.xml --coverage-crap4j build/logs/crap4j.xml --log-junit build/logs/junit.xml -c phpunit.xml.dist" />
+	</target>
+
+	<target name="phpunit-no-coverage" description="Run unit tests using PHPUnit">
+		<exec logoutput="true" command="${bin.path}/phpunit -c phpunit.xml.dist" checkreturn="true" />
 	</target>
 
 	<target name="run_parallel_tasks">
 		<parallel threadCount="${threads}">
-			<phingcall target="tasks_to_try" />	
-		</parallel>		
+			<phingcall target="tasks_to_try" />
+		</parallel>
 	</target>
 	<target name="run_serial_tasks">
 		<phingcall target="tasks_to_try" />
@@ -51,41 +56,45 @@
 			</else>
 		</if>
 	</target>
-	
+
 	<target name="phplint" description="Lints php files">
-        	<phplint haltonfailure="true">
-            		<fileset dir="${source}">
-                		<include name="**/*.php"/>
-            		</fileset>
-        	</phplint>
-    	</target>
-	
+        <phplint haltonfailure="true">
+            <fileset dir="${source}">
+                <include name="**/*.php"/>
+            </fileset>
+        </phplint>
+    </target>
+
 	<target name="pdepend" description="Generate jdepend.xml and software metrics charts using PHP_Depend">
-		<exec logoutput="true" command="pdepend --jdepend-xml=${basedir}/build/logs/jdepend.xml --jdepend-chart=${basedir}/build/pdepend/dependencies.svg --overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg ${source}" />
+		<exec logoutput="true" command="${bin.path}/pdepend --jdepend-xml=${basedir}/build/logs/jdepend.xml --jdepend-chart=${basedir}/build/pdepend/dependencies.svg --overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg ${source}" />
 	</target>
 
 	<target name="phpmd" description="Generate pmd.xml using PHPMD">
-		<exec logoutput="true" spawn="true" command="phpmd ${source} xml codesize,design,naming,unusedcode --reportfile ${basedir}/build/logs/pmd.xml" />
+		<exec logoutput="true" spawn="true" command="${bin.path}/phpmd ${source} xml codesize,design,naming,unusedcode --reportfile ${basedir}/build/logs/pmd.xml" />
 	</target>
 
 	<target name="phpcpd" description="Generate pmd-cpd.xml using PHPCPD">
-		<exec logoutput="true" command="phpcpd --log-pmd ${basedir}/build/logs/pmd-cpd.xml ${source}" />
+		<exec logoutput="true" command="${bin.path}/phpcpd --log-pmd ${basedir}/build/logs/pmd-cpd.xml ${source}" />
 	</target>
 
 	<target name="phploc" description="Generate phploc.csv">
-		<exec logoutput="true" command="phploc --log-csv ${basedir}/build/logs/phploc.csv ${source}" />
+		<exec logoutput="true" command="${bin.path}/phploc --log-csv ${basedir}/build/logs/phploc.csv ${source}" />
 	</target>
 
 	<target name="phpcs" description="Generate checkstyle.xml using PHP_CodeSniffer">
-		<exec logoutput="true" command="phpcs --report=checkstyle --report-file=${basedir}/build/logs/checkstyle.xml --standard=PSR2 ${source}" />
+		<exec logoutput="true" command="${bin.path}/phpcs --report=checkstyle --report-file=${basedir}/build/logs/checkstyle.xml --standard=PSR2 ${source}" />
 	</target>
 
 	<target name="phpdoc" description="Generate API documentation using PHPDocumentor">
-		<exec logoutput="true" command="phpdoc -d ${source} -t ${basedir}/build/api" />
+		<exec logoutput="true" command="${bin.path}/phpdoc -d ${source} -t ${basedir}/build/api" />
 	</target>
 
 	<target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
-		<exec logoutput="true" command="phpcb --log ${basedir}/build/logs --source ${source} --output ${basedir}/build/code-browser" />
+		<exec logoutput="true" command="${bin.path}/phpcb --log ${basedir}/build/logs --source ${source} --output ${basedir}/build/code-browser" />
+	</target>
+
+	<target name="lint-js" description="Lints javascript files">
+		<exec logoutput="true" command="jshint ${basedir}/public/js/" checkreturn="true" />
 	</target>
 
 	<target name="build" depends="clean,try_ParallelTasks,phpunit,phpcb" />
