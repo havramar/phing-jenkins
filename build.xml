@@ -70,7 +70,7 @@
 	</target>
 
 	<target name="phpmd" description="Generate pmd.xml using PHPMD">
-		<exec logoutput="true" spawn="true" command="${bin.path}/phpmd ${source} xml codesize,design,naming,unusedcode --reportfile ${basedir}/build/logs/pmd.xml" />
+		<exec logoutput="true" command="${bin.path}/phpmd ${source} xml codesize,design,naming,unusedcode --reportfile ${basedir}/build/logs/pmd.xml" />
 	</target>
 
 	<target name="phpcpd" description="Generate pmd-cpd.xml using PHPCPD">
